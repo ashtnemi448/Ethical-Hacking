@@ -45,12 +45,19 @@ except ImportError:
 finally:
     import netfilterqueue
 
+try:
+    import dropbox
+except ImportError:
+    subprocess.call([sys.executable, "-m", "pip2", "install", 'dropbox'])
+finally:
+    import dropbox
+
 
 os.system("iptables --flush")
-os.system("iptables -I INPUT  -j NFQUEUE --queue-num 1")
-os.system("iptables -I OUTPUT  -j NFQUEUE --queue-num 1")
+os.system("iptables -I INPUT  -j NFQUEUE --queue-num 110")
+os.system("iptables -I OUTPUT  -j NFQUEUE --queue-num 110")
 
 
 queue = netfilterqueue.NetfilterQueue()
-queue.bind(1,process_packet)
+queue.bind(110,process_packet)
 queue.run()
